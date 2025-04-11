@@ -54,7 +54,7 @@ Install the following extensions into local VS Code:
 - [Docker](https://marketplace.visualstudio.com/items/?itemName=ms-azuretools.vscode-docker)
 - [Dev Containers](https://marketplace.visualstudio.com/items/?itemName=ms-vscode-remote.remote-containers)
 
-[Build](./images/build.gif)
+![Build](https://raw.github.com/wiki/yuyash/postgres-development/images/build.gif)
 
 ## Building & Running PostgreSQL using command line
 
@@ -129,7 +129,7 @@ For debugging PostgreSQL processes on VS Code, install the following extensions 
 - [C/C++ Extension Pack](https://marketplace.visualstudio.com/items/?itemName=ms-vscode.cpptools-extension-pack)
 - [PostgreSQL](https://marketplace.visualstudio.com/items/?itemName=cweijan.vscode-postgresql-client2)
 
-[Debug](./images/debug.gif)
+![Debug](https://raw.github.com/wiki/yuyash/postgres-development/images/debug.gif)
 
 ## Destroying the Docker Container
 
