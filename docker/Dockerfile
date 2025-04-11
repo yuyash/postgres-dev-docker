@@ -38,6 +38,23 @@ RUN git clone git://git.postgresql.org/git/postgresql.git
 RUN mkdir -p $BUILD_DIR
 RUN touch /home/$USERNAME/.bash_profile
 ENV PG_DIR_PREFIX=/home/$USERNAME/Workplace/$BUILD_DIR
-RUN mkdir -p $BUILD_DIR/data
+ENV PATH=$PATH:$PG_DIR_PREFIX/bin/
 
+# Visual Studio Code configuration
+WORKDIR /home/$USERNAME/Workplace/postgresql/
+RUN mkdir -p .vscode
+COPY vscode-config/launch.json .vscode/
+COPY vscode-config/c_cpp_properties.json .vscode/
+COPY vscode-config/tasks.json .vscode/
+RUN sudo chown -R $USERNAME:$USERNAME .vscode/
+RUN echo ".vscode/*" >> .git/info/exclude
+
+# Copy scripts
+RUN mkdir -p scripts
+COPY scripts/* scripts/
+RUN sudo chown -R $USERNAME:$USERNAME scripts/
+RUN sudo chmod +x scripts/*
+RUN echo "scripts/*" >> .git/info/exclude
+
+ENV USER=$USERNAME
 CMD ["/bin/bash"]

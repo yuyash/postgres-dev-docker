@@ -1,0 +1,228 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "dependsOn": ["Configure", "Make", "Make Install"],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Rebuild",
+            "dependsOn": ["Make Clean", "Configure", "Make", "Make Install"],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Init & Start",
+            "dependsOn": ["Delete Data Folder", "InitDB", "Configure PostgreSQL", "Start"],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Configure",
+            "type": "shell",
+            "command": "./configure",
+            "args": [
+                "--prefix=${PG_DIR_PREFIX}",
+                "--enable-depend",
+                "--enable-debug",
+                "--enable-cassert",
+                "--enable-tap-tests",
+                "CFLAGS=-O0"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false,
+                "panel": "shared"
+            },
+            "hide": true
+        },
+        {
+            "label": "Make",
+            "type": "shell",
+            "command": "make",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "dependsOn": [],
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "label": "Make Install",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "install"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "dependsOn": [],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false,
+                "panel": "shared"
+            },
+            "hide": true
+        },
+        {
+            "label": "Make Clean",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false,
+                "panel": "shared"
+            },
+            "hide": true
+        },
+        {
+            "label": "Delete Data Folder",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf", "${PG_DIR_PREFIX}/data/*"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "label": "InitDB",
+            "type": "shell",
+            "command": "${PG_DIR_PREFIX}/bin/initdb -D ${PG_DIR_PREFIX}/data -U postgres --auth-local=trust --auth-host=scram-sha-256",
+            "args": [
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "dependsOn": [
+            ],
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "label": "Configure PostgreSQL",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/update-pg-hba-conf.sh && ${workspaceFolder}/scripts/update-postgresql-conf.sh",
+            "args": [
+            ],
+            "options": {},
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "dependsOn": [
+            ],
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "label": "Start",
+            "type": "shell",
+            "command": "sudo",
+            "args": [
+                "-u", "${USER}",
+                "${PG_DIR_PREFIX}/bin/pg_ctl",
+                "-D", "${PG_DIR_PREFIX}/data",
+                "-l", "${PG_DIR_PREFIX}/data/postgresql.log",
+                "start"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "dependsOn": [
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false,
+                "panel": "shared"
+            }        
+        },
+        {
+            "label": "Stop",
+            "type": "shell",
+            "command": "sudo",
+            "args": [
+                "-u", "${USER}",
+                "${PG_DIR_PREFIX}/bin/pg_ctl", "stop",
+                "-D", "${PG_DIR_PREFIX}/data",
+                "-m", "fast"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "dependsOn": [],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false,
+                "panel": "shared"
+            }
+        }
+    ]
+}

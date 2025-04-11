@@ -1,0 +1,21 @@
+{
+    "env": {
+        "myIncludePath": ["${workspaceFolder}/src/include", "${workspaceFolder}/src/interfaces/**"],
+        "myDefines": []
+    },
+    "configurations": [
+        {
+            "name": "Linux (GCC ARM64)",
+            "compilerPath": "/usr/bin/gcc",
+            "compilerArgs": ["-D_GNU_SOURCE"],
+            "intelliSenseMode": "linux-gcc-arm64",
+            "includePath": [ "${myIncludePath}", "/usr/include", "/usr/local/include" ],
+            "defines": [ "${myDefines}" ],
+            "cStandard": "${default}",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "mergeConfigurations": true
+          }
+    ],
+    "version": 4,
+    "enableConfigurationSquiggles": true
+}
