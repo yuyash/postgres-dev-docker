@@ -1,0 +1,20 @@
+services:
+  postgres-master:
+    build:
+      args:
+       USERNAME: ${USERNAME:?err}
+       BUILD_DIR: build/postgres/master
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: postgres-master
+    hostname: postgres-master
+    image: postgres/development:master
+    network_mode: bridge
+    ports:
+      - 5432:5432
+    restart: always
+    tty: true
+    user: ${USERNAME:?err}
+networks:
+  default:
+    name: bridge
