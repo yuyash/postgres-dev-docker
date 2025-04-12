@@ -41,8 +41,8 @@ docker ps
 The output should resemble:
 
 ```bash
-CONTAINER ID   IMAGE                         COMMAND       CREATED          STATUS          PORTS                    NAMES
-1b44906a3c20   postgres/development:master   "/bin/bash"   33 seconds ago   Up 33 seconds   0.0.0.0:5432->5432/tcp   postgres-master
+CONTAINER ID   IMAGE                         COMMAND                  CREATED         STATUS         PORTS     NAMES
+6f7a496d36f5   postgres/development:master   "sh -c 'pg_ctl -l ${…"   9 seconds ago   Up 9 seconds             postgres-master
 ```
 
 ## Building PostgreSQL using Visual Studio Code
@@ -66,14 +66,22 @@ Log into the container using:
 docker exec -it postgres-master bash
 ```
 
-You should be in the `/home/<YOUR_USER>/Workplace` directory.
+You should be in the `/home/<YOUR_USER>/Workplace/postgresql` directory. If not, navigate to the directory.
+
+### Step 2: Stop PostgreSQL
+
+By default, PostgreSQL is running when you start the docker container. Stop it before start building PostgreSQL source code.
+
+```bash
+pg_ctl stop -m fast
+```
 
 ### Step 2: Configure and Build PostgreSQL
 
-Navigate to the postgresql directory and run the following commands:
+Run the following commands:
 
 ```bash
-cd postgresql
+make clean
 ./configure --prefix=${PG_DIR_PREFIX} --enable-depend --enable-debug --enable-cassert --enable-tap-tests CFLAGS=-O0
 make
 make install
@@ -83,11 +91,12 @@ Note: The `PG_DIR_PREFIX` environment variable is set to `${HOME}/Workplace/buil
 
 ### Step 3: Configure and Build PostgreSQL
 
-Run the following commands to start PostgreSQL:
+The `PGDATA` directory is set to `${HOME}/Workplace/build/postgres/master/data`. Run the following commands to start PostgreSQL:
 
 ```bash
-${PG_DIR_PREFIX}/bin/initdb -D ${PG_DIR_PREFIX}/data
-pg_ctl -D ${PG_DIR_PREFIX}/data -l ${PG_DIR_PREFIX}/data/postgresql.log start
+rm -rf ${PGDATA}/*
+initdb -U postgres --auth-local=trust --auth-host=scram-sha-256
+pg_ctl start -l ${PGDATA}/postgresql.log
 ```
 
 ### Step 4: Configure and Build PostgreSQL
@@ -118,7 +127,7 @@ postgres-# \q
 Run the following command to stop your PostgreSQL instance:
 
 ```bash
-pg_ctl stop -D ${PG_DIR_PREFIX}/data -m smart
+pg_ctl stop -m fast
 ```
 
 ## Debugging PostgreSQL backend process

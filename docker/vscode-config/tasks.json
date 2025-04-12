@@ -125,11 +125,9 @@
             "command": "rm",
             "args": [
                 "-rf", 
-                "${PG_DIR_PREFIX}/data/*"
+                "${PGDATA}/*"
             ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
+            "options": {},
             "group": {
                 "kind": "build",
                 "isDefault": false
@@ -142,14 +140,11 @@
             "type": "shell",
             "command": "initdb",
             "args": [
-                "-D", "${PG_DIR_PREFIX}/data", 
                 "-U", "postgres",
                 "--auth-local=trust",
                 "--auth-host=scram-sha-256"
             ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
+            "options": {},
             "group": {
                 "kind": "test",
                 "isDefault": false
@@ -181,12 +176,9 @@
             "command": "pg_ctl",
             "args": [
                 "start",
-                "-D", "${PG_DIR_PREFIX}/data",
-                "-l", "${PG_DIR_PREFIX}/data/postgresql.log"
+                "-l", "${PGDATA}/postgresql.log"
             ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
+            "options": {},
             "group": {
                 "kind": "test",
                 "isDefault": false
@@ -207,12 +199,9 @@
             "command": "pg_ctl",
             "args": [
                 "stop",
-                "-D", "${PG_DIR_PREFIX}/data",
                 "-m", "fast"
             ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
+            "options": {},
             "group": {
                 "kind": "test",
                 "isDefault": false
