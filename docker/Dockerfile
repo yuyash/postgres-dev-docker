@@ -40,6 +40,24 @@ RUN touch /home/$USERNAME/.bash_profile
 ENV PG_DIR_PREFIX=/home/$USERNAME/Workplace/$BUILD_DIR
 ENV PATH=$PATH:$PG_DIR_PREFIX/bin/
 
+# Copy scripts
+WORKDIR /home/$USERNAME/Workplace/postgresql/
+RUN mkdir -p scripts
+COPY scripts/* scripts/
+RUN sudo chown -R $USERNAME:$USERNAME scripts/
+RUN sudo chmod +x scripts/*
+RUN echo "scripts/*" >> .git/info/exclude
+
+# Build PostgreSQL
+WORKDIR /home/$USERNAME/Workplace/postgresql/
+RUN ./configure --prefix=${PG_DIR_PREFIX} --enable-depend --enable-debug --enable-cassert --enable-tap-tests CFLAGS=-O0
+RUN make
+RUN make install
+ENV PGDATA=${PG_DIR_PREFIX}/data
+RUN initdb -U postgres --auth-local=trust --auth-host=scram-sha-256
+RUN ./scripts/update-pg-hba-conf.sh
+RUN ./scripts/update-postgresql-conf.sh
+
 # Visual Studio Code configuration
 WORKDIR /home/$USERNAME/Workplace/postgresql/
 RUN mkdir -p .vscode
@@ -49,12 +67,5 @@ COPY vscode-config/tasks.json .vscode/
 RUN sudo chown -R $USERNAME:$USERNAME .vscode/
 RUN echo ".vscode/*" >> .git/info/exclude
 
-# Copy scripts
-RUN mkdir -p scripts
-COPY scripts/* scripts/
-RUN sudo chown -R $USERNAME:$USERNAME scripts/
-RUN sudo chmod +x scripts/*
-RUN echo "scripts/*" >> .git/info/exclude
-
 ENV USER=$USERNAME
-CMD ["/bin/bash"]
+CMD ["sh", "-c", "pg_ctl -l ${PG_DIR_PREFIX}/data/postgresql.log start && tail -F ${PG_DIR_PREFIX}/data/postgresql.log"]

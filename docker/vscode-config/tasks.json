@@ -124,7 +124,8 @@
             "type": "shell",
             "command": "rm",
             "args": [
-                "-rf", "${PG_DIR_PREFIX}/data/*"
+                "-rf", 
+                "${PG_DIR_PREFIX}/data/*"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -139,8 +140,12 @@
         {
             "label": "InitDB",
             "type": "shell",
-            "command": "${PG_DIR_PREFIX}/bin/initdb -D ${PG_DIR_PREFIX}/data -U postgres --auth-local=trust --auth-host=scram-sha-256",
+            "command": "initdb",
             "args": [
+                "-D", "${PG_DIR_PREFIX}/data", 
+                "-U", "postgres",
+                "--auth-local=trust",
+                "--auth-host=scram-sha-256"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -173,13 +178,11 @@
         {
             "label": "Start",
             "type": "shell",
-            "command": "sudo",
+            "command": "pg_ctl",
             "args": [
-                "-u", "${USER}",
-                "${PG_DIR_PREFIX}/bin/pg_ctl",
+                "start",
                 "-D", "${PG_DIR_PREFIX}/data",
-                "-l", "${PG_DIR_PREFIX}/data/postgresql.log",
-                "start"
+                "-l", "${PG_DIR_PREFIX}/data/postgresql.log"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -201,10 +204,9 @@
         {
             "label": "Stop",
             "type": "shell",
-            "command": "sudo",
+            "command": "pg_ctl",
             "args": [
-                "-u", "${USER}",
-                "${PG_DIR_PREFIX}/bin/pg_ctl", "stop",
+                "stop",
                 "-D", "${PG_DIR_PREFIX}/data",
                 "-m", "fast"
             ],

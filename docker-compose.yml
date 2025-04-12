@@ -10,8 +10,6 @@ services:
     hostname: postgres
     image: postgres/development:master
     network_mode: host
-    ports:
-      - 5432:5432
     restart: always
     tty: true
     user: ${USERNAME:?err}
